@@ -1,8 +1,14 @@
 from typing import Annotated
 
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, Query
 
-from response import ApiResponse, BusinessError, BizCode, business_error_handler, success
+from response import (
+    ApiResponse,
+    BusinessError,
+    BizCode,
+    business_error_handler,
+    success,
+)
 
 app = FastAPI(
     title="示例 API",
@@ -25,7 +31,7 @@ app.add_exception_handler(BusinessError, business_error_handler)
     response_description="成功时 `code` 为 0，`data` 内含 `message` 字段。",
 )
 async def root() -> ApiResponse:
-    return success(data={"message": "Hello World"})
+    return success(data={"message": "Hello World1233"})
 
 
 @app.get(
@@ -36,7 +42,7 @@ async def root() -> ApiResponse:
     response_description="成功时 `data.message` 为问候内容。",
 )
 async def say_hello(
-        name: Annotated[str, Path(description="要问候的对方姓名")],
+    name: Annotated[str, Path(description="要问候的对方姓名")],
 ) -> ApiResponse:
     return success(data={"message": f"Hello {name}"})
 
@@ -49,16 +55,18 @@ async def say_hello(
     response_description="成功时 `data` 中含 `book_id` 及占位字段。",
 )
 async def get_book(
-        book_id: Annotated[
-            int,
-            Path(
-                ge=1,
-                le=100,
-                description="书籍编号，取值范围 1～100（含边界）",
-            ),
-        ],
+    book_id: Annotated[
+        int,
+        Path(
+            ge=1,
+            le=100,
+            description="书籍编号，取值范围 1～100（含边界）",
+        ),
+    ],
 ) -> ApiResponse:
-    return success(data={"book_id": book_id, "title": None, "note": "示例：此处可接数据库查询"})
+    return success(
+        data={"book_id": book_id, "title": None, "note": "示例：此处可接数据库查询"}
+    )
 
 
 @app.get(
@@ -69,16 +77,36 @@ async def get_book(
     response_description="成功时 `data.author` 为路径中的作者名。",
 )
 async def get_by_author(
-        author: Annotated[
-            str,
-            Path(
-                min_length=2,
-                max_length=10,
-                description="作者名称，长度 2～10 个字符（含边界）",
-            ),
-        ],
+    author: Annotated[
+        str,
+        Path(
+            min_length=2,
+            max_length=10,
+            description="作者名称，长度 2～10 个字符（含边界）",
+        ),
+    ],
 ) -> ApiResponse:
-    return success(data={"author": author, "books": [], "note": "示例：此处可按作者筛选书籍列表"})
+    return success(
+        data={"author": author, "books": [], "note": "示例：此处可按作者筛选书籍列表"}
+    )
+
+
+@app.get(
+    "/news/list",
+    summary="获取新闻列表",
+    description="分页获取新闻列表，支持指定跳过数量和返回数量。",
+    tags=["新闻"],
+    response_description="成功时 `data` 中含 `news_list` 及分页信息。",
+)
+async def get_news_list(
+    skip: Annotated[int, Query(ge=0, description="跳过记录数，默认0")] = 0,
+    limit: Annotated[int, Query(ge=1, le=100, description="返回记录数，默认10")] = 10,
+) -> ApiResponse:
+    # 模拟数据生成，实际项目中应从数据库查询
+    news_list = [{"title": f"新闻{i + 1}"} for i in range(skip, skip + limit)]
+    return success(
+        data={"news_list": news_list, "total": 100, "skip": skip, "limit": limit}
+    )
 
 
 @app.get(
