@@ -5,7 +5,22 @@ Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/hello/User
+GET http://127.0.0.1:8000/hello?name=User
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/hello
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/books/1
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/authors/鲁迅
 Accept: application/json
 
 ###
