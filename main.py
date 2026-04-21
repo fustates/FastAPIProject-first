@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Path, Query
+from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel, Field
 
 app = FastAPI(
@@ -24,6 +25,17 @@ app = FastAPI(
 )
 async def root():
     return {"message": "Hello World1233"}
+
+
+@app.get(
+    "/demo/error",
+    summary="演示业务错误响应",
+    description="故意抛出 HTTP 异常,展示 FastAPI 默认错误响应格式。",
+    tags=["演示"],
+    response_description="返回 404 状态码及错误详情。",
+)
+async def demo_error():
+    raise HTTPException(status_code=404, detail="示例业务错误")
 
 
 @app.get(
@@ -133,11 +145,24 @@ async def login(login_data: LoginRequest):
 
 
 @app.get(
-    "/demo/error",
-    summary="演示业务错误响应",
-    description="故意抛出 HTTP 异常,展示 FastAPI 默认错误响应格式。",
+    "/response/html_response",
+    summary="返回 HTML 响应",
+    description="演示如何返回 HTML 格式的响应内容。",
     tags=["演示"],
-    response_description="返回 404 状态码及错误详情。",
+    response_description="返回 HTML 格式的字符串内容。",
 )
-async def demo_error():
-    raise HTTPException(status_code=404, detail="示例业务错误")
+async def html_response():
+    html = "<h1>Hello World</h1>"
+    return HTMLResponse(content=html)
+
+
+@app.get(
+    "/response/file_response",
+    summary="返回文件响应",
+    description="演示如何返回文件(如图片)响应,支持浏览器直接预览或下载。",
+    tags=["演示"],
+    response_description="返回文件二进制流,Content-Type 根据文件类型自动设置。",
+)
+async def file_response():
+    image = "./file/image/001.jpeg"
+    return FileResponse(image)
