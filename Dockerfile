@@ -20,7 +20,8 @@ COPY . /code
 
 # 对外暴露服务端口
 
-EXPOSE 80
+# 对外暴露 8000 端口
+EXPOSE 8000
 
-# 启动 FastAPI 应用
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+# 启动时指定端口为 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
