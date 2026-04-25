@@ -1,5 +1,5 @@
-# 使用 Python 3.14 轻量镜像
-FROM python:3.14-slim
+# 使用 Python 3.12 轻量镜像
+FROM python:3.12-slim
 
 # 关闭 pyc 生成并确保日志实时输出
 ENV PYTHONDONTWRITEBYTECODE=1 \
