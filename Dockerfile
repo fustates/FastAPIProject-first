@@ -1,5 +1,5 @@
-# 使用 Python 3.13 轻量镜像（当前依赖生态更稳定）
-FROM python:3.13-slim
+# 使用 Python 3.12 轻量镜像（第三方依赖兼容性更稳）
+FROM python:3.12-slim
 
 # 关闭 pyc 生成并确保日志实时输出
 ENV PYTHONDONTWRITEBYTECODE=1 \
