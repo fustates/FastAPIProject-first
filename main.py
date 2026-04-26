@@ -5,6 +5,9 @@ from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel, Field
 
 app = FastAPI(
+    docs_url=None,  # 关闭 Swagger UI
+    redoc_url=None,  # 关闭 ReDoc
+    openapi_url=None,  # 关闭 OpenAPI JSON
     title="示例 API",
     description="FastAPI 原生响应格式示例服务。",
     version="0.1.0",
