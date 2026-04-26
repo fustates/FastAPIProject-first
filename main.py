@@ -20,6 +20,18 @@ app = FastAPI(
 
 
 @app.get(
+    "/health",
+    summary="健康检查",
+    description="用于负载均衡或编排探活;后续可在此加入 DB、Redis 等依赖检查。",
+    tags=["基础"],
+    response_description="成功时返回 status 为 healthy 的字典。",
+)
+async def health_check():
+    # 以后可以在这里加入对 DB 和 Redis 的连接检查
+    return {"status": "healthy"}
+
+
+@app.get(
     "/",
     summary="根路径",
     description="返回欢迎信息,用于确认服务可用。",

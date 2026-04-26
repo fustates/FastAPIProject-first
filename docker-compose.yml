@@ -1,0 +1,26 @@
+services:
+  fastapi:
+    image: ${IMAGE_NAME}:${BUILD_NUMBER}
+    container_name: ${CONTAINER_NAME}
+    restart: always
+    networks:
+      - web-gateway
+    deploy:
+      update_config:
+        order: start-first # 关键：先起新容器，通过检查后再关旧的
+        failure_action: rollback # 失败自动回滚
+    healthcheck: # 生产级别的灵魂：确保服务真的“活了”
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  # 未来你可以直接在这里平滑加入 pgsql 和 redis
+  # db:
+  #   image: postgres:15-alpine
+  #   volumes:
+  #     - ./pgdata:/var/lib/postgresql/data
+
+networks:
+  web-gateway:
+    external: true # 使用你现有的 Caddy 网络
