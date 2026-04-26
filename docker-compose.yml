@@ -1,18 +1,23 @@
+version: "3.8"
+
 services:
   fastapi:
-    image: ${IMAGE_NAME}:${BUILD_NUMBER}
-    container_name: ${CONTAINER_NAME}
+    image: ${DEPLOY_IMAGE} # 对应 Jenkins 传入的环境变量
+    container_name: ${DEPLOY_CONTAINER}
     restart: always
     networks:
       - web-gateway
+    # 核心：滚动更新配置
     deploy:
       update_config:
-        order: start-first # 关键：先起新容器，通过检查后再关旧的
-        failure_action: rollback # 失败自动回滚
-    healthcheck: # 生产级别的灵魂：确保服务真的“活了”
+        order: start-first # 重要：先启动新容器，健康后再停止旧容器
+        delay: 5s # 给新容器 5 秒的初始缓冲时间
+        failure_action: rollback
+    # 核心：健康检查（没有这个，Docker 无法判断新容器是否真的 Ready）
+    healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 5s
-      timeout: 3s
+      interval: 10s
+      timeout: 5s
       retries: 3
 
   # 未来你可以直接在这里平滑加入 pgsql 和 redis
@@ -23,4 +28,4 @@ services:
 
 networks:
   web-gateway:
-    external: true # 使用你现有的 Caddy 网络
+    external: true # 使用已有的外部 Caddy 网络
